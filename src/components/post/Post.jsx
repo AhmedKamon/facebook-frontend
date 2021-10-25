@@ -12,6 +12,7 @@ export default function Post({post}) {
     const [isLiked,setIsLiked] = useState(false)
     const {user: currentUser} = useContext(AuthContext)
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
+    const IMG = process.env.REACT_APP_IMAGE
     useEffect(() =>{
         setIsLiked(post.likes.includes(currentUser._id))
     },[currentUser._id,post.likes])
@@ -52,7 +53,7 @@ export default function Post({post}) {
                </div>
                <div className="postCenter">
                    <span className="postText">{post?.desc}</span>
-                   <img className='postImage' src={post?.img} alt=""/>
+                   <img className='postImage' src={`${IMG}${post?.img}`} alt=""/>
                </div>
                <div className="postBottom">
                    <div className="postBottomLeft">

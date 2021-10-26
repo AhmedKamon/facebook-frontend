@@ -1,9 +1,23 @@
 import './rightbar.css'
 import {Users} from '../../dummyData'
 import Online from '../online/Online'
+import { useEffect, useState } from 'react';
+import axios from 'axios';
 
 export default function Rightbar({user}) {
-
+const [friends, setFriends] = useState([])
+console.log(friends,'followings')
+  useEffect(() =>{
+    const getFriends = async () =>{
+      try {
+        const friendList = await axios.get('/users/friends/'+user._id)
+        setFriends(friendList.data)
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    getFriends()
+  },[user?._id])
   const HomeRightbar = () =>{
     
     return(
@@ -27,6 +41,7 @@ export default function Rightbar({user}) {
 
   const ProfileRightbar = () =>{
     const PF = process.env.REACT_APP_PUBLIC_FOLDER
+    const IMG = process.env.REACT_APP_IMAGE
     return (
       <>
       <h4 className='rightbarTitle' >User Information</h4>
@@ -46,22 +61,13 @@ export default function Rightbar({user}) {
       </div>
       <h4 className='rightbarTitle' >User Friends</h4>
       <div className="rightbarFollowings">
-        <div className="rightbarFollowing">
-          <img className='rightbarFollowingImg' src={`${PF}person/2.jpg`} alt="" />
-          <span className="rightbarFollowingName">Shagor</span>
+        {
+         friends.map((friend) =>
+          <div className="rightbarFollowing">
+          <img className='rightbarFollowingImg' src={ friend.profilePicture ? IMG+friend?.profilePicture : `${PF}person/noAvater.jpg`} alt="" />
+          <span className="rightbarFollowingName">{friend?.username}</span>
         </div>
-        <div className="rightbarFollowing">
-          <img className='rightbarFollowingImg' src={`${PF}person/3.jpg`}alt="" />
-          <span className="rightbarFollowingName">Shagor</span>
-        </div>
-        <div className="rightbarFollowing">
-          <img className='rightbarFollowingImg' src={`${PF}person/1.jpeg`} alt="" />
-          <span className="rightbarFollowingName">Shagot</span>
-        </div>
-        <div className="rightbarFollowing">
-          <img className='rightbarFollowingImg' src={`${PF}person/2.jpg`} alt="" />
-          <span className="rightbarFollowingName">Shagor</span>
-        </div>
+         )}
       </div>
       </>
     );

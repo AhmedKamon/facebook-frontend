@@ -1,12 +1,21 @@
 import './rightbar.css'
 import {Users} from '../../dummyData'
 import Online from '../online/Online'
-import { useEffect, useState } from 'react';
+import { useEffect, useState,useContext} from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
+import {AuthContext} from '../../context/AuthContext'
+import { Add, Remove } from '@mui/icons-material';
 
 export default function Rightbar({user}) {
 const [friends, setFriends] = useState([])
 console.log(friends,'followings')
+const {user:currentUser, dispatch} = useContext(AuthContext)
+const [followed,setFollowed] = useState(false)
+
+useEffect(() =>{
+  currentUser.followings.includes(user?.id)
+},[currentUser?.followings,user?.id])
   useEffect(() =>{
     const getFriends = async () =>{
       try {
@@ -18,6 +27,20 @@ console.log(friends,'followings')
     }
     getFriends()
   },[user?._id])
+  const handelClick = async() =>{
+    try {
+      if(followed){
+        axios.put('users/'+user._id+'/unfollow', {userId:currentUser._id})
+        dispatch({type:'UNFOLLOW', payload:user._id})
+      }else{
+        axios.put('users/'+user._id+'/follow', {userId:currentUser._id})
+        dispatch({type:'FOLLOW', payload:user._id})
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setFollowed(!followed)
+  }
   const HomeRightbar = () =>{
     
     return(
@@ -44,6 +67,13 @@ console.log(friends,'followings')
     const IMG = process.env.REACT_APP_IMAGE
     return (
       <>
+      {user.username !== currentUser.username &&
+      <button className="followBtn" onClick={handelClick}>
+        {followed? 'usfollow' : 'follow'}
+        {followed? <Remove/>: <Add/>}
+        
+      </button>
+      }
       <h4 className='rightbarTitle' >User Information</h4>
       <div className="rightbarInfo">
         <div className="rightbarInfoItem">
@@ -60,15 +90,21 @@ console.log(friends,'followings')
         </div>
       </div>
       <h4 className='rightbarTitle' >User Friends</h4>
+      
       <div className="rightbarFollowings">
+      
         {
          friends.map((friend) =>
+         <Link to={'/profile/'+ friend?.username} style={{textDecoration:'none'}}>
           <div className="rightbarFollowing">
-          <img className='rightbarFollowingImg' src={ friend.profilePicture ? IMG+friend?.profilePicture : `${PF}person/noAvater.jpg`} alt="" />
+          <img className='rightbarFollowingImg' src={ friend.profilePicture ? `${IMG}${friend?.profilePicture}` : `${PF}person/noAvater.jpg`} alt="" />
           <span className="rightbarFollowingName">{friend?.username}</span>
         </div>
+        </Link>
          )}
+         
       </div>
+      
       </>
     );
   }

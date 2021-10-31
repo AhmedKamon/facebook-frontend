@@ -36,12 +36,14 @@
 .chatMenuWrapper{
     display: flex;
     flex-direction: column;
+  
 }
 .chatBoxBottom{
    margin-top: 5px;
    display: flex;
    align-items: center;
    justify-content: space-between; 
+  
 }
 .chatOnline{
     flex: 3;
@@ -49,4 +51,13 @@
 .chatMenuWrapper, .chatBoxWrapper, .chatOnlineWrapper{
 padding: 10px;
 height: 100%;
+}
+.noConvText{
+    position: absolute;
+    top: 10%;
+    font-size: 50px;
+    width: 40%;
+    cursor: default;
+    color: gray;
+
 }
